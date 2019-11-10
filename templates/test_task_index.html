@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button type="button" id="run">Run bot</button>
+<input type="number" id="x">
+<input type="number" id="y">
+<script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous">
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("#run").click(function (event) {
+            $.ajax({
+                type: "GET",
+                url: "http://127.0.0.1:8000{% url 'run-bot' %}",
+                data: {"x": parseInt($("#x").val()), "y": parseInt($("#y").val()) },
+                success: console.log('OK')
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

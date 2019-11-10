@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}{% endblock %}
+
+{% block custom-style %}
+    <link href="{% static "main/css/demo1/pages/general/login/login-6.css" %}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block body-cls %}class="kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed
+    kt-header-mobile--fixed kt-subheader--fixed kt-subheader--enabled kt-subheader--solid kt-aside--enabled
+    kt-aside--fixed kt-page--loading"{% endblock %}
+
+{% block body %}
+    <div class="kt-grid kt-grid--ver kt-grid--root">
+        <div class="kt-grid kt-grid--hor kt-grid--root  kt-login kt-login--v6 kt-login--signin" id="kt_login">
+            <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--desktop kt-grid--ver-desktop kt-grid--hor-tablet-and-mobile">
+                <div class="kt-grid__item  kt-grid__item--order-tablet-and-mobile-2  kt-grid kt-grid--hor kt-login__aside">
+                    <div class="kt-login__wrapper">
+                        <div class="kt-login__container">
+                            <div class="kt-login__body">
+                                {% include 'parts/login.html' %}
+                                {% include 'parts/signup.html' %}
+                                {% include 'parts/forgot_pass.html' %}
+                            </div>
+                        </div>
+                        <div class="kt-login__account">
+                            <span class="kt-login__account-msg">Don't have an account yet ?</span>&nbsp;&nbsp;
+                            <a href="javascript:;" id="kt_login_signup" class="kt-login__account-link">Sign Up!</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="kt-grid__item kt-grid__item--fluid kt-grid__item--center kt-grid kt-grid--ver kt-login__content"
+                     style="background-image: url({% static "main/media/bg/abstract.jpg" %});">
+                    <div class="kt-login__section">
+                        <div class="kt-login__block">
+                            <h3 class="kt-login__title">Join Our System</h3>
+                            <div class="kt-login__desc"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom-script %}
+    <script src="{% static "main/js/demo1/pages/login/login-general.js" %}" type="text/javascript"></script>
+{% endblock %}
