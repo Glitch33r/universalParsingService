@@ -25,8 +25,8 @@
 					<!-- begin:: Aside -->
 					<div class="kt-aside__brand kt-grid__item " id="kt_aside_brand">
 						<div class="kt-aside__brand-logo">
-							<a href="demo1/index.html">
-								<img alt="Logo" src="assets/media/logos/logo-light.png" />
+							<a href="{% url 'main:dashboard' %}">
+								<img alt="Logo" src="#" />
 							</a>
 						</div>
 						<div class="kt-aside__brand-tools">
@@ -77,7 +77,7 @@
 			</div>
 		</div>
     {% include 'parts/scroll-top.html' %}
-    {% include 'parts/sticky-toolbar.html' %}
+{#    {% include 'parts/sticky-toolbar.html' %}#}
 {% endblock %}
 
 {% block custom-script %}

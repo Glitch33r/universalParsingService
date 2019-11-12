@@ -27,7 +27,8 @@ def signup(request):
             return return_error_msg('Sorry, but username already exist. Try to change it.')
         else:
             user = User.objects.create(
-                first_name=request.POST.get('fullname'),
+                first_name=request.POST.get('name'),
+                last_name=request.POST.get('surname'),
                 username=request.POST.get('username'),
                 password=make_password(request.POST.get('password')),
                 email=request.POST.get('email'),
