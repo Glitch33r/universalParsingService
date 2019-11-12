@@ -4,7 +4,7 @@ import pytz
 from celery import shared_task
 from upt_v2.celery import app
 import requests
-import bs4
+# import bs4
 from .models import *
 
 # Create your views here.

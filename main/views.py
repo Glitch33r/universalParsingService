@@ -14,8 +14,8 @@ def index(request):
 
 def run_bot(request):
     print(request.GET.dict())
+    request.user.profile.tasks.add(create_periodic_task(request.GET.get('x'), request.GET.get('y')))
     # run_bot_task.delay(request.GET.get('x'), request.GET.get('y'))
-    create_periodic_task(request.GET.get('x'), request.GET.get('y'))
 
 
 def create_periodic_task(a, b):
@@ -24,12 +24,13 @@ def create_periodic_task(a, b):
         period=IntervalSchedule.SECONDS
     )
 
-    PeriodicTask.objects.create(
+    p_task = PeriodicTask.objects.create(
         interval=schedule,  # we created this above.
         name='run_bot_task_' + a + b,  # simply describes this periodic task.
-        task='upt_v2.tasks.run_bot_task',  # name of task.
+        regtask='upt_v2.tasks.run_bot_task',  # name of task.
         args=json.dumps([a, b]),
     )
+    return p_task
 
 
 def index(request):
@@ -37,4 +38,4 @@ def index(request):
 
 
 def dashboard(request):
-    return HttpResponse(f'Hello {request.user.username}, {request.session.get_expiry_date()}')
+    return render(request, 'dashboard.html')

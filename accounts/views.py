@@ -56,10 +56,11 @@ def sign_in(request):
             request.session.set_expiry(0)
 
         user = authenticate(username=username, password=password)
+        print(user)
         if user is not None:
             login(request, user)
             # args['profile'] = user
-            return JsonResponse({"message": "OK"})
+            return redirect('/')
         else:
             # args['login_error'] = 'User not found!'
             return return_error_msg('Username or/and password are incorrect.')

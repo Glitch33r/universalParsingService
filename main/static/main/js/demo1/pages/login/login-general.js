@@ -7,7 +7,7 @@ var KTLoginGeneral = function () {
 
     var showErrorMsg = function (form, type, msg) {
         var alert = $('<div class="kt-alert kt-alert--outline alert alert-' + type + ' alert-dismissible" role="alert">\
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><i class="fa fa-times"></i></button>\
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">&nbsp;&nbsp;<i class="fa fa-times"></i></button>\
 			<span></span>\
 		</div>');
 
@@ -104,6 +104,15 @@ var KTLoginGeneral = function () {
                     setTimeout(function () {
                         window.location.replace('/')
                     }, 1000);
+                },
+                error: function (response) {
+                    let d = JSON.parse(response.responseText);
+                    setTimeout(function () {
+                        btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
+                        // form.clearForm();
+                        // form.validate().resetForm();
+                        showErrorMsg(form, 'danger', d.msg);
+                    }, 2000);
                 }
             });
         });
