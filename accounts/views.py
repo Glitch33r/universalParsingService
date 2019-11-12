@@ -14,35 +14,47 @@ from django.core.mail import EmailMessage
 from .token_generator import account_activation_token
 
 
+def return_error_msg(msg, status=400):
+    resp = JsonResponse({"success": False, "msg": msg})
+    resp.status_code = status
+    return resp
+
+
 def signup(request):
     if request.is_ajax():
-        user = User.objects.create(
-            first_name=request.POST.get('fullname'),
-            password=make_password(request.POST.get('password')),
-            email=request.POST.get('email'),
-            is_active=False,
-        )
-        # print(urlsafe_base64_encode(force_bytes(user.id)))
-        current_site = get_current_site(request)
-        email_subject = 'Activate Your Account'
-        message = render_to_string('parts/activate_account.html', {
-            'user': user,
-            'domain': current_site.domain,
-            'uid': urlsafe_base64_encode(force_bytes(user.id)),
-            'token': account_activation_token.make_token(user),
-        })
-        to_email = request.POST.get('email')
-        email = EmailMessage(email_subject, message, to=[to_email])
-        email.send()
-        return JsonResponse({"message": "OK"})
+        print(request.POST.get('username'))
+        if User.objects.filter(username=request.POST.get('username')).exists():
+            return return_error_msg('Sorry, but username already exist. Try to change it.')
+        else:
+            user = User.objects.create(
+                first_name=request.POST.get('fullname'),
+                username=request.POST.get('username'),
+                password=make_password(request.POST.get('password')),
+                email=request.POST.get('email'),
+                is_active=False,
+            )
+            message = render_to_string('parts/activate_account_message.html', {
+                'user': user,
+                'domain': get_current_site(request),
+                'uid': urlsafe_base64_encode(force_bytes(user.id)),
+                'token': account_activation_token.make_token(user),
+            })
+            to_email = request.POST.get('email')
+            EmailMessage('Activate Your Account', message, to=[to_email]).send()
+            return JsonResponse({"message": "OK"})
     else:
-        return JsonResponse({"success": False, "error": "there was an error"})
+        return return_error_msg('Bad request')
 
 
-def signin(request):
-    if request.is_ajax():
+def sign_in(request):
+    if request.method == 'GET':
+        return render(request, 'index.html')
+    elif request.is_ajax():
         username = request.POST.get('username')
         password = request.POST.get('password')
+        if request.POST.get('remember') is None:
+            request.session.set_expiry(0)
+
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
@@ -50,9 +62,9 @@ def signin(request):
             return JsonResponse({"message": "OK"})
         else:
             # args['login_error'] = 'User not found!'
-            return JsonResponse({"success": False, "error": "there was an error"})
+            return return_error_msg('Username or/and password are incorrect.')
     else:
-        return JsonResponse({"success": False, "error": "there was an error"})
+        return return_error_msg('Bad request')
 
 
 def log_out(request):
@@ -71,31 +83,20 @@ def email_validation(email):
 def forgot_password(request):
     if request.is_ajax():
         u_email = request.POST.get('email')
-
         if email_validation(u_email):
-            user = User.objects.filter(email=u_email).first()
+            user = User.objects.filter(email=u_email)
             if user.exists():
-                current_site = get_current_site(request)
-                message = render_to_string('', {
-                    'email': user.email,
-                    'domain': current_site,
-                    'site_name': 'your site',
+                user = user.first()
+                message = render_to_string('parts/reset_password_message.html', {
+                    'domain': get_current_site(request),
                     'uid': urlsafe_base64_encode(force_bytes(user.id)),
                     'user': user,
                     'token': default_token_generator.make_token(user),
-                    'protocol': 'http',
                 })
-                subject_template_name = 'registration/password_reset_subject.txt'
-
-                email_template_name = 'registration/password_reset_email.html'
-
-                subject = 'Password recovering'
-
-                email = EmailMessage(subject, message, to=[u_email])
-                email.send()
+                EmailMessage('Password recovering', message, to=[u_email]).send()
                 return JsonResponse({"message": "OK"})
         else:
-            return JsonResponse({"success": False, "error": "there was an error"})
+            return JsonResponse({"message": "OK"})  # little trolling
 
 
 def activate(request, uidb64, token):
@@ -108,26 +109,43 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-        # login(request, user)
-        return HttpResponse('Your account has been activate successfully')
+        login(request, user)
+        return render(request, 'index.html', {
+            'alert_msg': 'Your account has been activate successfully!',
+            'alert_type': 'success'
+        })
     else:
-        return HttpResponse('Activation link is invalid!')
+        return render(request, 'index.html', {
+            'alert_msg': 'Activation link is invalid!',
+            'alert_type': 'danger'
+        })
 
 
 def password_reset_confirm(request, uidb64, token):
-    try:
-        uid = force_bytes(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
+    if request.method == 'GET':
+        return render(request, 'parts/change_password.html')
+    elif request.is_ajax():
+        try:
+            uid = force_bytes(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
 
-    if user is not None and default_token_generator.check_token(user, token):
-        if request.is_ajax():
+        if user is not None and default_token_generator.check_token(user, token):
             new_password = request.POST.get('password')
             user.set_password(new_password)
             user.save()
-            return HttpResponse('Your password has been upadated successfully')
+            return render(request, 'index.html', {
+                'alert_msg': 'Your password has been updated successfully!',
+                'alert_type': 'success'
+            })
         else:
-            return HttpResponse('BAD request')
+            return render(request, 'index.html', {
+                'alert_msg': 'Activation link is invalid!',
+                'alert_type': 'danger'
+            })
     else:
-        return HttpResponse('Activation link is invalid!')
+        return render(request, 'index.html', {
+            'alert_msg': 'Bad request',
+            'alert_type': 'danger'
+        })

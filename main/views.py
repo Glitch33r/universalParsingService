@@ -1,5 +1,7 @@
 import json
 
+from django.http import HttpResponse
+
 from .tasks import *
 from django.shortcuts import redirect, render
 
@@ -32,3 +34,7 @@ def create_periodic_task(a, b):
 
 def index(request):
     return render(request, 'index.html')
+
+
+def dashboard(request):
+    return HttpResponse(f'Hello {request.user.username}, {request.session.get_expiry_date()}')

@@ -26,13 +26,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-LOGIN_REDIRECT_URL = '/qwerty'
-LOGOUT_REDIRECT_URL = '/'
-LOGIN_URL = '/'
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-# LOGIN_EXEMPT_URLS = (
-#   r'^accounts/log-in/',  # allow any URL under /legal/*
-# )
+# LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/account/sign-in'
+LOGIN_URL = '/account/sign-in'
+
+LOGIN_EXEMPT_URLS = (
+  r'^account/',  # allow any URL under /legal/*
+)
 
 
 # Application definition
@@ -60,7 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'accounts.middleware.middleware.LoginRequiredMiddleware',
+    'accounts.middleware.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'upt_v2.urls'

@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}{% endblock %}
+{% block title %}Index page{% endblock %}
 
 {% block custom-style %}
     <link href="{% static "main/css/demo1/pages/general/login/login-6.css" %}" rel="stylesheet" type="text/css"/>
@@ -20,19 +20,27 @@
                     <div class="kt-login__wrapper">
                         <div class="kt-login__container">
                             <div class="kt-login__body">
+                                {% if alert_msg is not None %}
+                                    <div class="kt-alert kt-alert--outline alert alert-{{ alert_type}} alert-dismissible"
+                                         role="alert">
+                                        <button type="button" class="close" data-dismiss="alert"
+                                                aria-label="Close"><i class="fa fa-times"></i></button>
+                                        <span>{{ alert_msg }}</span>
+                                    </div>
+                                {% endif %}
                                 {% include 'parts/login.html' %}
                                 {% include 'parts/signup.html' %}
-                                {% include 'parts/forgot_pass.html' %}
+                                {% include 'parts/forgot_password.html' %}
                             </div>
                         </div>
                         <div class="kt-login__account">
-                            <span class="kt-login__account-msg">Don't have an account yet ?</span>&nbsp;&nbsp;
+                            <span class="kt-login__account-msg">Don't have an account yet ?</span>
                             <a href="javascript:;" id="kt_login_signup" class="kt-login__account-link">Sign Up!</a>
                         </div>
                     </div>
                 </div>
                 <div class="kt-grid__item kt-grid__item--fluid kt-grid__item--center kt-grid kt-grid--ver kt-login__content"
-                     style="background-image: url({% static "main/media/bg/abstract.jpg" %});">
+                     style="background-image: url({% static "main/media/bg/bg-2.jpg" %});">
                     <div class="kt-login__section">
                         <div class="kt-login__block">
                             <h3 class="kt-login__title">Join Our System</h3>
