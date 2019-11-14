@@ -64,9 +64,12 @@
 
 					<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
 						<!-- begin:: Content Head -->
-						{% include 'parts/content-head.html'%}
+                        {% block content-head %}
+						    {% include 'parts/content-head.html' with next=None%}
+                        {% endblock %}
 						<!-- end:: Content Head -->
 						<!-- begin:: Content -->
+                        {% block content %}{% endblock %}
 						<!-- end:: Content -->
 					</div>
 

@@ -33,9 +33,17 @@ def create_periodic_task(a, b):
     return p_task
 
 
-def index(request):
-    return render(request, 'index.html')
+# def index(request):
+#     return render(request, 'index.html')
 
 
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    return render(request, 'default/dashboard.html')
+
+
+def faq_page(request):
+    return render(request, 'default/faq.html')
+
+
+def support_page(request):
+    pass
