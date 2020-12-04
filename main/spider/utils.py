@@ -1,3 +1,6 @@
+import time
+from lxml.etree import XPathSyntaxError, XPathEvalError
+
 DEV = False
 PROD = True
 VAR = 'VAR_'
@@ -12,7 +15,7 @@ class Function:
     name = 'Function name'
     state = False
 
-    def __init__(self, f_str=None):
+    def __init__(self, f_str=''):
         self.full_str = f_str
         self.parts = f_str.split()
 
@@ -22,8 +25,7 @@ class Function:
     def __set_state(self, v: bool):
         self.state = v
 
-    @staticmethod
-    def explanation():
+    def explanation(self):
         pass
 
     def check_syntax(self):
@@ -41,9 +43,16 @@ class Open(Function):
         else:
             return {'passed': False, 'mgs': f'Error in syntax construction with {self.name} function'}
 
-    @staticmethod
-    def explanation():
-        pass
+    def explanation(self):
+        text = {
+            'func': self.name,
+            'state': "Production" if self.state else "Development/Testing",
+            'can': "will open given URL",
+            'use': "open URL",
+            'access': ' - '
+        }
+
+        return text
 
     def execute(self, variables, **kwargs):
         if self.parts[1] in variables.keys():
@@ -64,9 +73,16 @@ class Back(Function):
         else:
             return {'passed': False, 'mgs': f'Error in syntax construction with {self.name} function'}
 
-    @staticmethod
-    def explanation():
-        pass
+    def explanation(self):
+        text = {
+            'func': self.name,
+            'state': "production" if self.state else "development/testing",
+            'can': "will take you back a given number of steps (open links)",
+            'use': "back number_of_steps",
+            'access': ' - '
+        }
+
+        return text
 
     def execute(self, variables, **kwargs):
 
@@ -75,6 +91,40 @@ class Back(Function):
             url = kwargs.get('opened_urls')[length - int(self.parts[1])]
             kwargs.get('opened_urls').pop(length - int(self.parts[1]))
             Open(f'open {url}').execute(variables, **kwargs)
+
+
+class Sleep(Function):
+    name = 'sleep'
+    state = DEV
+
+    def check_syntax(self):
+        if len(self.parts) == 2:
+            if self.parts[1].isdigit():
+                if int(self.parts[1]) <= 60:
+                    return {'passed': True}
+                else:
+                    return {'passed': False,
+                            'mgs': f'Error in syntax construction with {self.name} function - max 60 sec'}
+            else:
+                return {'passed': False,
+                        'mgs': f'Error in syntax construction with {self.name} function - must be integer'}
+        else:
+            return {'passed': False,
+                    'mgs': f'Error in syntax construction with {self.name} function'}
+
+    def explanation(self):
+        text = {
+            'func': self.name,
+            'state': "production" if self.state else "development/testing",
+            'can': "will stop the execution of the code for the specified number of seconds",
+            'use': "sleep number_of_seconds",
+            'access': ' - '
+        }
+        return text
+
+    def execute(self, variables, **kwargs):
+        print(f'Sleep on {self.parts[1]} sec')
+        time.sleep(int(self.parts[1]))
 
 
 class Let(Function):
@@ -87,9 +137,16 @@ class Let(Function):
         else:
             return {'passed': False, 'mgs': f'Error in syntax construction with {self.name} function'}
 
-    @staticmethod
-    def explanation():
-        pass
+    def explanation(self):
+        text = {
+            'func': self.name,
+            'state': "production" if self.state else "development/testing",
+            'can': "create variables and set values for them. You can access using VAR_[VARIABLE_NAME]",
+            'use': "let VARIABLE_NAME value",
+            'access': 'VAR_VARIABLE_NAME'
+        }
+
+        return text
 
     def execute(self, variables, **kwargs):
         if not self.parts[1] in variables.keys():
@@ -98,6 +155,52 @@ class Let(Function):
                     variables.update({VAR + self.parts[1]: self.parts[2]})
                 else:
                     variables.update({VAR + self.parts[1]: ''})
+            except IndexError:
+                pass
+
+
+class Get(Function):
+    name = 'get'
+    state = DEV
+
+    def check_syntax(self):
+        if len(self.parts) == 3 and self.parts[0] == self.name:
+            temp = self.parts[2].split('|')
+            if temp[0] == 'xpath' and len(temp) == 2:
+                return {'passed': True}
+        else:
+            return {'passed': False, 'mgs': f'Error in syntax construction with {self.name} function'}
+
+    def xpath(self, tree, expression):
+        try:
+            elements = tree.xpath(expression)
+        except (XPathSyntaxError, XPathEvalError) as error:
+            print(error)
+            return
+
+        if len(elements) == 1:
+            return elements[0].text
+        else:
+            return elements
+
+    def explanation(self):
+        text = {
+            'func': self.name,
+            'state': "Production" if self.state else "Development/Testing",
+            'can': "get data from opened URL using xpath. You can collect one or multiple elements depends on xpath expression.",
+            'use': "get VARIABLE_NAME xpath|expression",
+            'access': 'VAR_VARIABLE_NAME'
+        }
+
+        return text
+
+    def execute(self, variables, **kwargs):
+        expression = self.parts[2].split('|')[1]
+        result = self.xpath(kwargs.get('tree'), expression)
+
+        if not self.parts[1] in variables.keys():
+            try:
+                variables.update({VAR + self.parts[1]: result})
             except IndexError:
                 pass
 
@@ -114,9 +217,16 @@ class Concat(Function):
             return {'passed': False,
                     'mgs': f'Error in syntax construction with {self.name} function or you forgot some params'}
 
-    @staticmethod
-    def explanation():
-        pass
+    def explanation(self):
+        text = {
+            'func': self.name,
+            'state': "production" if self.state else "development/testing",
+            'can': "concatenate data separated by space",
+            'use': "concat VARIABLE_NAME_TO_SAVE variable/value .. variable/value",
+            'access': 'CONCAT_VARIABLE_NAME_TO_SAVE'
+        }
+
+        return text
 
     def execute(self, variables, **kwargs):
         tmp = ''
@@ -140,9 +250,16 @@ class Split(Function):
             return {'passed': False,
                     'mgs': f'Error in syntax construction with {self.name} function'}
 
-    @staticmethod
-    def explanation():
-        pass
+    def explanation(self):
+        text = {
+            'func': self.name,
+            'state': "production" if self.state else "development/testing",
+            'can': "used to split variable by setted separator",
+            'use': "split VARIABLE_NAME separator",
+            'access': 'SPLIT_VARIABLE_NAME_[id of element]'
+        }
+
+        return text
 
     def execute(self, variables, **kwargs):
         if self.parts[1] in variables.keys():
@@ -165,9 +282,16 @@ class Replace(Function):
             return {'passed': False,
                     'mgs': f'Error in syntax construction with {self.name} function or you forgot some params'}
 
-    @staticmethod
-    def explanation():
-        pass
+    def explanation(self):
+        text = {
+            'func': self.name,
+            'state': "production" if self.state else "development/testing",
+            'can': "return a copy with all occurrences of substring old replaced by new. Saving in the same variable name. ",
+            'use': "replace VARIABLE_NAME part_to_replace new_part",
+            'access': 'VAR_VARIABLE_NAME'
+        }
+
+        return text
 
     def execute(self, variables, **kwargs):
         variables[self.parts[1]] = variables[self.parts[1]].replace(self.parts[2], self.parts[3])
@@ -178,15 +302,25 @@ class Add(Function):
     state = DEV
 
     def check_syntax(self):
-        if len(self.parts) == 3 and self.parts[2].isdigit() and self.parts[1].isdigit():
-            return {'passed': True}
+        if len(self.parts) == 3:
+            if self.parts[2].isdigit() and self.parts[1].isdigit():
+                return {'passed': True}
+            else:
+                return {'passed': False,
+                        'mgs': f'Error in syntax construction with {self.name} function - you must use only digits'}
         else:
             return {'passed': False,
                     'mgs': f'Error in syntax construction with {self.name} function or you forgot some params'}
 
-    @staticmethod
-    def explanation():
-        pass
+    def explanation(self):
+        text = {
+            'func': self.name,
+            'state': "production" if self.state else "development/testing",
+            'can': "add variable with given number",
+            'use': "add VARIABLE_NAME number",
+            'access': 'VAR_VARIABLE_NAME'
+        }
+        return text
 
     def execute(self, variables, **kwargs):
         variables[self.parts[1]] = int(variables[self.parts[1]]) + int(self.parts[2])

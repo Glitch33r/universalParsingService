@@ -1,150 +1,47 @@
 {% extends 'default/dashboard.html' %}
 
-{% block title %}F.A.Q |{% endblock %}
+{% block title %}Documentation |{% endblock %}
 
 {% block content-head %}
-    {% include 'parts/content-head.html' with next='F.A.Q' %}
+    {% include 'parts/content-head.html' with next='Documentation' %}
 {% endblock %}
 
 {% block content %}
-<div class="row" data-sticky-container>
-    <div class="col-lg-3 col-xl-2">
-    	<div class="kt-portlet sticky" data-sticky="true" data-margin-top="100px" data-sticky-for="1023" data-sticky-class="kt-sticky">
-            <div class="kt-portlet__body kt-portlet__body--fit">
-                <ul class="kt-nav kt-nav--bold kt-nav--md-space kt-nav--v3 kt-margin-t-20 kt-margin-b-20 nav nav-tabs" role="tablist">
-                    <li class="kt-nav__item">
-                        <a class="kt-nav__link active" data-toggle="tab" href="#kt_profile_tab_personal_information" role="tab">
-                            <span class="kt-nav__link-icon"><i class="flaticon-avatar"></i></span>
-                            <span class="kt-nav__link-text">Personal Information</span>
-                        </a>
-                    </li>
-                    <li class="kt-nav__item">
-                        <a class="kt-nav__link" data-toggle="tab" href="#kt_profile_tab_account_information" role="tab">
-                            <span class="kt-nav__link-icon"><i class="flaticon-lock"></i></span>
-                            <span class="kt-nav__link-text">Acccount Information</span>
-                        </a>
-                    </li>
-                    <li class="kt-nav__item">
-                        <a class="kt-nav__link" data-toggle="tab" href="#kt_profile_change_password" role="tab">
-                            <span class="kt-nav__link-icon"><i class="flaticon-settings"></i></span>
-                            <span class="kt-nav__link-text">Change Password</span>
-                        </a>
-                    </li>
-                    <li class="kt-nav__item">
-                        <a class="kt-nav__link" data-toggle="tab" href="#kt_profile_email_settings" role="tab">
-                            <span class="kt-nav__link-icon"><i class="flaticon-multimedia-2"></i></span>
-                            <span class="kt-nav__link-text">Email Settings</span>
-                        </a>
-                    </li>
-                    <li class="kt-nav__item">
-                        <a class="kt-nav__link" href="#" role="tab" data-toggle="kt-tooltip" title="" data-placement="right" data-original-title="This feature is coming soon!">
-                            <span class="kt-nav__link-icon"><i class="flaticon-coins"></i></span>
-                            <span class="kt-nav__link-text">Saved Credit Cards</span>
-                        </a>
-                    </li>
-                    <li class="kt-nav__item">
-                        <a class="kt-nav__link" href="#" role="tab" data-toggle="kt-tooltip" title="" data-placement="right" data-original-title="This feature is coming soon!">
-                            <span class="kt-nav__link-icon"><i class="flaticon-customer"></i></span>
-                            <span class="kt-nav__link-text">Social Networks</span>
-                        </a>
-                    </li>
-                    <li class="kt-nav__separator"></li>
-                    <li class="kt-nav__item">
-                        <a class="kt-nav__link" href="#" role="tab" data-toggle="kt-tooltip" title="" data-placement="right" data-original-title="This feature is coming soon!">
-                            <span class="kt-nav__link-icon"><i class="flaticon-diagram"></i></span>
-                            <span class="kt-nav__link-text">Tax Information</span>
-                        </a>
-                    </li>
-                    <li class="kt-nav__item">
-                        <a class="kt-nav__link" href="#" role="tab" data-toggle="kt-tooltip" title="" data-placement="right" data-original-title="This feature is coming soon!">
-                            <span class="kt-nav__link-icon"><i class="flaticon-bag"></i></span>
-                            <span class="kt-nav__link-text">Purchases</span>
-                        </a>
-                    </li>
-                    <li class="kt-nav__item">
-                        <a class="kt-nav__link" href="#" role="tab" data-toggle="kt-tooltip" title="" data-placement="right" data-original-title="This feature is coming soon!">
-                            <span class="kt-nav__link-icon"><i class="flaticon-tabs"></i></span>
-                            <span class="kt-nav__link-text">Statements</span>
-                        </a>
-                    </li>
-                    <li class="kt-nav__item">
-                        <a class="kt-nav__link" href="#" role="tab" data-toggle="kt-tooltip" title="" data-placement="right" data-original-title="This feature is coming soon!">
-                            <span class="kt-nav__link-icon"><i class="flaticon-share"></i></span>
-                            <span class="kt-nav__link-text">Audit Log</span>
-                        </a>
-                    </li>
-                </ul>
+    <div class="container">
+        <div class="card">
+            <div class="card-body p-10">
+                <!--begin::Row-->
+                <div class="row">
+                    <div class="col-lg">
+                        <h3>Documentation of existed functions</h3>
+                        <div class="callout">
+                            <p>It is recommended to be reviewed in detail for further usage</p>
+                        </div>
+                        <p></p>
+                        {% for item in data %}
+                            <!--begin::Tab Content-->
+                            <div class="tab-content" id="{{ item.func }}" style="margin-bottom: 10px;">
+                                <!--begin::Item-->
+                                <div class="card border-top-0">
+                                    <div class="card-header">
+                                        <strong>{{ item.func|title }}</strong>
+                                    </div>
+                                    <div class="card-body text-dark-50 font-size-lg pl-12"><p>
+                                        <b>Function: </b>{{ item.func }}</p>
+                                        <p><strong>Current state: </strong>{{ item.state }}</p>
+                                        <p><strong>What it can do: </strong>{{ item.can }}</p>
+                                        <p><strong>How to use in code (in general): </strong>{{ item.use }}</p>
+                                        <p><strong>Access in code (after using): </strong>{{ item.access }}</p>
+                                    </div>
+                                </div>
+                                <!--end::Item-->
+                            </div>
+                        {% endfor %}
+                        <!--end::Tab Content-->
+                    </div>
+                </div>
+                <!--end::Row-->
             </div>
         </div>
     </div>
-    <div class="col-lg-6 col-xl-8">
-    	<div class="kt-portlet">
-            <div class="kt-portlet__body" id="kt_profile_tab_personal_information">
-		        <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		         <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		         <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		         <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		         <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		        <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		         <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		         <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		         <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		         <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		        <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		         <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		         <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		         <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		         <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		        <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-		    </div>
-		</div>
-    </div>
-    <div class="col-lg-3 col-xl-2">
-    	<div class="kt-portlet sticky" data-sticky="true" data-margin-top="100px" data-sticky-for="1023" data-sticky-class="kt-sticky">
-            <div class="kt-portlet__body">
-                <p>
-		        	Lorem Ipsum is simply dummy text of the printing and typesetting industry. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged
-		        </p>
-		        <p>
-		        	 It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages.
-		        </p>
-		        <p>
-		        	Recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-		        </p>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}

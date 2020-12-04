@@ -9,7 +9,7 @@ from .utils import *
 
 class Browser:
     name = 'Chrome'
-    path = "/usr/local/bin/chromedriver"
+    path = "/usr/lib/chromium-browser/chromedriver"
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     driver = webdriver.Chrome(executable_path=path, options=chrome_options)
@@ -27,7 +27,7 @@ class Program(Browser):
 
     def get_page_text(self):
         self.tree = html.fromstring(self.driver.page_source)
-        return self.tree.xpath('//title')[0].text
+        # return self.tree.xpath('//title')[0].text
 
     def run(self):
         # First Step - checking is syntax OK
@@ -40,6 +40,9 @@ class Program(Browser):
                 function = eval(parts[0].capitalize())(line)
                 if parts[0] == 'open' or parts[0] == 'back':
                     kwargs.update({'driver': self.driver, 'opened_urls': self.opened_urls})
+                elif parts[0] == 'get':
+                    self.get_page_text()
+                    kwargs.update({'tree': self.tree})
                 function.execute(self.variables, **kwargs)
             print(self.variables)
             print(self.opened_urls)
