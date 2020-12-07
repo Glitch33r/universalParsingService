@@ -1,0 +1,37 @@
+{% extends 'default/dashboard.html' %}
+
+{% block title %}Create Unit |{% endblock %}
+
+{% block content-head %}
+    {% include 'parts/content-head.html' with next='Create Unit' %}
+{% endblock %}
+
+{% block content %}
+    <div class="alert alert-light" role="alert">
+        <div class="alert-text">Create your unit for parsing
+        </div>
+    </div>
+    <form class="form" method="post">
+        <div class="card-body">
+            <div class="form-group">
+                <input type="hidden" name="user" class="form-control form-control-solid"/>
+            </div>
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" name="name" class="form-control form-control-solid"/>
+            </div>
+            <div class="form-group">
+                <label>Nickname:</label>
+                <input type="text" name="nickname" class="form-control form-control-solid"/>
+            </div>
+            <div class="form-group">
+                <label>Small description:</label>
+                <input type="text" name="description" class="form-control form-control-solid"/>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="reset" class="btn btn-primary mr-2">Create</button>
+        </div>
+
+    </form>
+{% endblock %}

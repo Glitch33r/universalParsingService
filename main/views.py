@@ -45,12 +45,36 @@ def dashboard(request):
 
 
 def faq_page(request):
-    data = []
+    funcs = []
     for cls in all_subclasses(Function):
-        data.append(cls().explanation())
+        funcs.append(cls().explanation())
 
-    return render(request, 'default/faq.html', {'data': data})
+    return render(request, 'default/faq.html', {'data': funcs})
 
 
 def support_page(request):
-    pass
+    return render(request, 'default/support.html')
+
+
+def create_unit_form(request):
+    return render(request, 'bot/create_unit.html')
+
+
+def create_unit_code_form(request):
+    return render(request, 'bot/create_code.html')
+
+
+def list_unit(request):
+    return render(request, 'bot/list_code.html')
+
+
+def list_unit_code(request):
+    return render(request, 'bot/list_unit.html')
+
+
+def launch_unit(request):
+    return render(request, 'bot/launch_unit.html')
+
+
+def collected_data(request):
+    return render(request, 'bot/collected_data.html')

@@ -16,3 +16,4 @@ def run_bot_task(x, y):
     print(f'answer: {z}')
     data(text=str(z)).save()
     print('saved')
+    return z

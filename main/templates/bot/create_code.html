@@ -1,0 +1,30 @@
+{% extends 'default/dashboard.html' %}
+
+{% block title %}Create Unit Code |{% endblock %}
+
+{% block content-head %}
+    {% include 'parts/content-head.html' with next='Create Unit Code' %}
+{% endblock %}
+
+{% block content %}
+    <div class="alert alert-light" role="alert">
+        <div class="alert-text">Add some code for unit
+        </div>
+    </div>
+    <form class="form" method="post">
+        <div class="card-body">
+            <div class="form-group">
+                <label>Unit:</label>
+                <input type="text" name="unit" class="form-control form-control-solid"/>
+            </div>
+            <div class="form-group">
+                <label>Program:</label>
+                <textarea type="text" name="program" rows="10" class="form-control form-control-solid"></textarea>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="reset" class="btn btn-primary mr-2">Add</button>
+        </div>
+
+    </form>
+{% endblock %}
