@@ -1,10 +1,12 @@
 import json
 
 from django.http import HttpResponse
-
+from django.urls import reverse
+from django.contrib import messages
+from .forms import *
 from .spider.utils import Function
 from .tasks import *
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
@@ -53,23 +55,83 @@ def faq_page(request):
 
 
 def support_page(request):
-    return render(request, 'default/support.html')
+    if request.method == 'POST':
+        support = SupportForm(request.POST)
+        if support.is_valid():
+            action = support.save(commit=False)
+            action.user = request.user
+            action.save()
+            messages.success(
+                request,
+                'Thank you! Your query sent successfully.'
+            )
+            return redirect(reverse('main:support'))
+    else:
+        support = SupportForm()
+
+    return render(request, 'default/support.html', {'form': support})
 
 
 def create_unit_form(request):
-    return render(request, 'bot/create_unit.html')
+    if request.method == 'POST':
+        unit = UnitCreateForm(request.POST, prefix='unit')
+        code = UnitCodeForm(request.POST, prefix='code')
+        if unit.is_valid() and code.is_valid():
+            action = unit.save(commit=False)
+            action.user = request.user
+            code = code.save(commit=False)
+            action.save()
+            code.unit = action
+            code.save()
+            messages.success(
+                request,
+                'Yes! Your unit created successfully.'
+            )
+            return redirect(reverse('main:list-unit'))
+    else:
+        unit = UnitCreateForm(prefix='unit')
+        code = UnitCodeForm(prefix='code')
+
+    return render(request, 'bot/create_unit.html', {'form_unit': unit, 'form_code': code})
 
 
-def create_unit_code_form(request):
-    return render(request, 'bot/create_code.html')
+# def create_unit_code_form(request):
+#     return render(request, 'bot/create_code.html')
 
 
 def list_unit(request):
-    return render(request, 'bot/list_code.html')
+    values = Unit.objects.filter(user=request.user)
+    return render(request, 'bot/list_unit.html', {'data': values})
 
 
-def list_unit_code(request):
-    return render(request, 'bot/list_unit.html')
+def unit_update(request, pk: int):
+    obj = get_object_or_404(Unit, pk=pk)
+    unit = UnitFormUpdate(request.POST or None, instance=obj, prefix="unit")
+
+    obj_code = get_object_or_404(UnitCode, unit=obj)
+    code = UnitCodeForm(request.POST or None, instance=obj_code, prefix="code")
+
+    if request.method == 'POST':
+        if unit.is_valid() and code.is_valid():
+            unit.save()
+            code.save()
+            messages.success(
+                request,
+                'Unit was updated successfully!'
+            )
+            return redirect(reverse('main:list-unit'))
+
+    return render(request, 'bot/update_unit.html', {'form_unit': unit, 'form_code': code})
+
+
+def unit_delete(request, obj_id: int):
+    obj = get_object_or_404(Unit, pk=obj_id)
+    obj.delete()
+
+    return redirect(reverse('main:list-unit'))
+
+# def list_unit_code(request):
+#     return render(request, 'bot/list_code.html')
 
 
 def launch_unit(request):

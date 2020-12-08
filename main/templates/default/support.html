@@ -6,30 +6,54 @@
     {% include 'parts/content-head.html' with next='Support' %}
 {% endblock %}
 
+{% load widget_tweaks %}
+
 {% block content %}
     <div class="alert alert-light" role="alert">
         <div class="alert-text">Send us a bug or suggestion. Welcome!
         </div>
     </div>
-    <form class="form" method="post">
+            {% if messages %}
+            <div class="alert alert-custom alert-success fade show mb-5" role="alert">
+                <div class="alert-icon">
+                    <i class="flaticon-like"></i>
+                </div>
+                {% for msg in messages %}
+                    <div class="alert-text">{{ msg }}</div>
+                    <p {% if msg.tags %} class="{{ msg.tags }}"{% endif %}></p>
+                {% endfor %}
+                <div class="alert-close">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">
+                            <i class="flaticon2-cross"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        {% endif %}
+    <form class="form" method="post" action="{% url 'main:support' %}">
+        {% csrf_token %}
         <div class="card-body">
             <div class="form-group">
                 <label>Name:</label>
-                <input type="text" name="name" class="form-control form-control-solid" placeholder="Enter full name"/>
+                {% render_field form.name class+="form-control form-control-solid" placeholder="Enter name"%}
+                {#                <input type="text" name="name" class="form-control form-control-solid" placeholder="Enter full name"/>#}
                 <span class="form-text text-muted">Please enter your name</span>
             </div>
             <div class="form-group">
                 <label>Email address:</label>
-                <input type="email" name="email" class="form-control form-control-solid" placeholder="Enter email"/>
+                {% render_field form.email class+="form-control form-control-solid" type='email' placeholder="Enter email"%}
+                {#                <input type="email" name="email" class="form-control form-control-solid" placeholder="Enter email"/>#}
                 <span class="form-text text-muted">We'll never share your email with anyone else</span>
             </div>
             <div class="form-group">
                 <label>Message</label>
-                <textarea name="text" class="form-control form-control-solid" rows="5" placeholder="Your message"/></textarea>
+                {% render_field form.text class+="form-control form-control-solid" rows="5" placeholder="Your message"%}
+                {#                <textarea name="text" class="form-control form-control-solid" rows="5" placeholder="Your message"/></textarea>#}
             </div>
         </div>
         <div class="card-footer">
-            <button type="reset" class="btn btn-primary mr-2">Send</button>
+            <button type="submit" class="btn btn-primary mr-2">Send</button>
         </div>
 
     </form>

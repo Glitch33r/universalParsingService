@@ -11,16 +11,14 @@ class data(models.Model):
 
 class Unit(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=64, unique=True)
-    nickname = models.CharField(max_length=16)
-    description = models.CharField(max_length=128)
+    nickname = models.CharField(max_length=64, unique=True)
+    description = models.CharField(max_length=256)
     createdAt = models.DateField(auto_now_add=True, blank=True, null=True)
-
 
     class Meta:
         ordering = ['id']
         indexes = [
-            models.Index(fields=['name', 'createdAt'])
+            models.Index(fields=['nickname', 'createdAt'])
         ]
 
 

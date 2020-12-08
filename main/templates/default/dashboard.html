@@ -13,6 +13,8 @@
     kt-header-mobile--fixed kt-subheader--fixed kt-subheader--enabled kt-subheader--solid kt-aside--enabled
     kt-aside--fixed kt-page--loading"{% endblock %}
 
+{% load widget_tweaks %}
+
 {% block body %}
     {% include 'parts/mobile-header.html' %}
     <div class="kt-grid kt-grid--hor kt-grid--root">
@@ -126,7 +128,7 @@
                                             <!--begin::Body-->
                                             <div class="card-body d-flex flex-column">
                                                 <!--begin::Title-->
-                                                <a href="{% url 'main:faq' %}" target="_blank"
+                                                <a href="{% url 'main:support' %}" target="_blank"
                                                    class="text-hover-primary font-weight-bolder font-size-h3">
                                                     <i class="fa fa-shield-alt"></i> Support
                                                 </a>

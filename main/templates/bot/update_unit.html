@@ -1,16 +1,16 @@
 {% extends 'default/dashboard.html' %}
 
-{% block title %}Create Unit |{% endblock %}
+{% block title %}Update Unit |{% endblock %}
 
 {% block content-head %}
-    {% include 'parts/content-head.html' with next='Create Unit' %}
+    {% include 'parts/content-head.html' with next='Update Unit' %}
 {% endblock %}
 
 {% load widget_tweaks %}
 
 {% block content %}
     <div class="alert alert-light" role="alert">
-        <div class="alert-text">Create your unit for parsing
+        <div class="alert-text">Update your unit
         </div>
     </div>
     {% if form_unit.errors %}
@@ -47,12 +47,12 @@
                     <i class="flaticon2-cross"></i>
                 </span>
                 </button>
-            </div>
+            </div>s
         </div>
     {% endif %}
 
 
-    <form class="form" method="post" action="{% url 'main:create-unit' %}">
+    <form class="form" method="post">
         {% csrf_token %}
         <div class="card-body">
             <strong>Unit</strong>
@@ -76,7 +76,7 @@
             </div>
         </div>
         <div class="card-footer">
-            <button type="submit" class="btn btn-primary mr-2">Create</button>
+            <button type="submit" class="btn btn-primary mr-2">Update</button>
         </div>
 
     </form>
