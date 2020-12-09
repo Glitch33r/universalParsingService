@@ -1,0 +1,55 @@
+{% extends 'default/dashboard.html' %}
+
+{% block title %}Collected Data Show|{% endblock %}
+
+{% block content-head %}
+    {% include 'parts/content-head.html' with next='Show Collected Data' %}
+{% endblock %}
+
+{% block content %}
+    <div class="card card-custom gutter-b">
+        <div class="card-header border-0 py-5">
+            <h3 class="card-title align-items-start flex-column">
+                <span class="card-label font-weight-bolder text-dark">Data</span><br><br>
+                <span class="text-muted mt-3 font-weight-bold font-size-sm">List collected data </span>
+            </h3>
+            <br>
+
+            <strong>Unit info</strong>
+            <hr>
+            <strong>Nickname:</strong> <a style="text-decoration: underline !important;" target="_blank"
+                                          href="{% url 'main:unit-update' pk=unit.id %}">{{ unit.nickname }}</a>
+            <strong>Date created:</strong> {{ unit.createdAt }}
+            <br>
+        </div>
+
+
+        <div class="card-body py-0">
+            <div class="table-responsive">
+                <table class="table table-head-custom table-vertical-center" id="kt_advance_table_widget_1">
+                    <thead>
+                    <tr class="text-left">
+                        <th class="pr-0" style="width: 200px">Date creation</th>
+                        <th style="min-width: 150px">Collected data</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in data %}
+                        <tr>
+                            <td>
+                                <span class="text-dark-75 font-weight-bolder d-block font-size-lg">{{ item.createdAt }}</span>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column mr-2">
+                                    <span class="text-dark-75 font-weight-bolder d-block font-size-lg">{{ item.data }}</span>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <td class="text-center font-weight-bolder" colspan="5">Sorry, you have not collected data by this unit</td>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

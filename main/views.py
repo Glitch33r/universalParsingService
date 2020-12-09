@@ -1,15 +1,16 @@
 import json
 
-from django.http import HttpResponse, JsonResponse
+from django.contrib import messages
+from django.http import HttpResponse
+from django.shortcuts import redirect, render, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+from django_celery_beat.models import PeriodicTask
+
 from .forms import *
 from .spider.utils import Function
 from .tasks import *
-from django.shortcuts import redirect, render, get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
-from django_celery_beat.models import PeriodicTask, IntervalSchedule, CrontabSchedule
 
 
 def all_subclasses(cls):
@@ -119,6 +120,35 @@ def launch_unit(request):
     return render(request, 'bot/launch_unit.html', {'data': tasks})
 
 
+def launch_unit_update(request, pk):
+    obj = get_object_or_404(PeriodicTask, pk=pk)
+    task = PeriodicTaskUpdateForm(request.POST or None, instance=obj, prefix="task")
+
+    obj_cron = get_object_or_404(CrontabSchedule, pk=obj.crontab.pk)
+    cron = CrontabForm(request.POST or None, instance=obj_cron, prefix="cron")
+
+    if request.method == 'POST':
+        if task.is_valid() and cron.is_valid():
+            task.save()
+            cron.save()
+            messages.success(
+                request,
+                'Task was updated successfully!'
+            )
+            return redirect(reverse('main:launch-unit'))
+
+    return render(request, 'bot/launch_task_update_form.html', {'form_task': task, 'form_cron': cron})
+
+
+@csrf_exempt
+def launch_refresh(request):
+    if request.is_ajax():
+        user = request.user
+        tasks = user.profile.tasks.all()
+        html = render_to_string('bot/launch_table_part.html', {'data': tasks})
+        return HttpResponse(html)
+
+
 @csrf_exempt
 def launch_unit_form(request):
     units = Unit.objects.filter(user=request.user)
@@ -148,11 +178,18 @@ def launch_unit_form(request):
 
 
 def collected_data(request):
-    return render(request, 'bot/collected_data.html')
+    user_id = request.user
+    unit = Unit.objects.filter(user=user_id)
+    return render(request, 'bot/collected_data.html', {'data': unit})
+
+
+def collected_data_show(request, pk):
+    unit = Unit.objects.filter(pk=pk)[0]
+    values = UnitData.objects.filter(unit_id=unit.id)
+    return render(request, 'bot/collected_data_show.html', {'unit': unit, 'data': values})
 
 
 def create_periodic_task(request, name, description, schedule, unit_id):
-
     task = PeriodicTask.objects.create(
         crontab=schedule,  # we created this above.
         name=name,  # simply describes this periodic task.

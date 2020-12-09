@@ -1,10 +1,10 @@
-from pprint import pprint
-
+from lxml import html
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from lxml import etree, html
 
 from .utils import *
+
+db_logger = logging.getLogger('db')
 
 
 class Browser:
@@ -21,23 +21,26 @@ class Program(Browser):
     opened_urls = []
     variables = {}
 
-    def __init__(self, code: str):
+    def __init__(self, _id, code: str):
         self.code = code
-        self.chs = CheckSyntax(code)
+        self.id = _id
+        self.chs = CheckSyntax(_id, code)
+        db_logger.debug(f'Program started|{_id}')
 
     def get_page_text(self):
         self.tree = html.fromstring(self.driver.page_source)
-        # return self.tree.xpath('//title')[0].text
 
     def run(self):
         # First Step - checking is syntax OK
         passed, data = self.chs.check()
+        db_logger.debug(f'Checking syntax|{self.id}')
         # Second Step - if OK, start execute code
         if passed:
+            db_logger.info(f'Syntax - OK|{self.id}')
             for line in data:
                 kwargs = {}
                 parts = line.split()
-                function = eval(parts[0].capitalize())(line)
+                function = eval(parts[0].capitalize())(self.id, line)
                 if parts[0] == 'open' or parts[0] == 'back':
                     kwargs.update({'driver': self.driver, 'opened_urls': self.opened_urls})
                 elif parts[0] == 'get':
@@ -47,8 +50,11 @@ class Program(Browser):
             print(self.variables)
             print(self.opened_urls)
         else:
+            for line in data:
+                db_logger.error(f'{line}|{self.id}')
             print(data)  # Print Errors
 
     def __del__(self):
         print('Browser will be closed')
+        db_logger.info(f'Stopping program|{self.id}')
         self.driver.quit()

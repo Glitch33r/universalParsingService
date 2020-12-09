@@ -33,9 +33,8 @@ LOGOUT_REDIRECT_URL = '/account/sign-in'
 LOGIN_URL = '/account/sign-in'
 
 LOGIN_EXEMPT_URLS = (
-  r'^account/',  # allow any URL under /legal/*
+    r'^account/',  # allow any URL under /legal/*
 )
-
 
 # Application definition
 
@@ -52,7 +51,8 @@ INSTALLED_APPS = [
     'api',
     'main',
     'accounts',
-    'statistic',
+    'logger.db_log_handler',
+    'logger',
 ]
 
 MIDDLEWARE = [
@@ -155,3 +155,29 @@ EMAIL_HOST = 'smtp.mailtrap.io'
 EMAIL_HOST_USER = '97cd58129e5a62'
 EMAIL_HOST_PASSWORD = '981415d3194fd6'
 EMAIL_PORT = '2525'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(asctime)s %(message)s'
+        },
+    },
+    'handlers': {
+        'db_handler': {
+            'level': 'DEBUG',
+            'class': 'logger.db_log_handler.DatabaseLogHandler',
+            'formatter': 'verbose'
+        }
+    },
+    'loggers': {
+        'db': {
+            'handlers': ['db_handler'],
+            'level': 'DEBUG'
+        }
+    }
+}

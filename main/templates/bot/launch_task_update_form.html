@@ -1,0 +1,83 @@
+{% extends 'default/dashboard.html' %}
+
+{% block title %}Launch Unit | Update task |{% endblock %}
+
+{% block content-head %}
+    {% include 'parts/content-head.html' with next='Update task' %}
+{% endblock %}
+
+{% load widget_tweaks %}
+
+{% block content %}
+    <div id="error"></div>
+    <strong>Update Task</strong>
+    <hr>
+    <form class="form" method="post">
+        {% csrf_token %}
+        <div class="card-body">
+            <strong>Change task info</strong>
+            <div class="form-group">
+                {{ form_task.name.errors }}
+                <label for="{{ form_task.name.id_for_label }}">Name:</label>
+                {{ form_task.name }}
+            </div>
+            <div class="form-group">
+                {{ form_task.description.errors }}
+                <label for="{{ form_task.description.id_for_label }}">Description:</label>
+                {{ form_task.description }}
+            </div>
+            <div class="form-group">
+                {{ form_task.task.errors }}
+                <label for="{{ form_task.task.id_for_label }}">Task:</label>
+                {{ form_task.task }}
+            </div>
+            <div class="form-group">
+                {{ form_task.enabled.errors }}
+                <label for="{{ form_task.enabled.id_for_label }}">Enabled:</label>
+                {{ form_task.enabled }}
+            </div>
+            <strong>Change cron schedule</strong>
+            <p>Cron info <a href="https://crontab.guru/">here</a></p>
+            <hr>
+            <div class="form-group">
+                {{ form_cron.minute.errors }}
+                <label for="{{ form_cron.minute.id_for_label }}">Minute:</label>
+                {{ form_cron.minute }}
+                <span class="form-text text-muted">{{ form_cron.minute.help_text }}</span>
+            </div>
+            <div class="form-group">
+                {{ form_cron.hour.errors }}
+                <label for="{{ form_cron.hour.id_for_label }}">Hour:</label>
+                {{ form_cron.hour }}
+                <span class="form-text text-muted">{{ form_cron.hour.help_text }}</span>
+            </div>
+            <div class="form-group">
+                {{ form_cron.day_of_week.errors }}
+                <label for="{{ form_cron.day_of_week.id_for_label }}">Day of week:</label>
+                {{ form_cron.day_of_week }}
+                <span class="form-text text-muted">{{ form_cron.day_of_week.help_text }}</span>
+            </div>
+            <div class="form-group">
+                {{ form_cron.day_of_month.errors }}
+                <label for="{{ form_cron.day_of_month.id_for_label }}">Day of month:</label>
+                {{ form_cron.day_of_month }}
+                <span class="form-text text-muted">{{ form_cron.day_of_month.help_text }}</span>
+            </div>
+            <div class="form-group">
+                {{ form_cron.month_of_year.errors }}
+                <label for="{{ form_cron.month_of_year.id_for_label }}">Month of year:</label>
+                {{ form_cron.month_of_year }}
+                <span class="form-text text-muted">{{ form_cron.month_of_year.help_text }}</span>
+            </div>
+            <div class="form-group">
+                {{ form_cron.timezone.errors }}
+                <label for="{{ form_cron.timezone.id_for_label }}">Timezone:</label>
+                {{ form_cron.timezone }}
+                <span class="form-text text-muted">{{ form_cron.timezone.help_text }}</span>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary mr-2">Update task</button>
+        </div>
+    </form>
+{% endblock %}

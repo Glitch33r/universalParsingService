@@ -1,4 +1,6 @@
+import logging
 import time
+
 from lxml.etree import XPathSyntaxError, XPathEvalError
 
 DEV = False
@@ -10,13 +12,16 @@ COMPARE = 'COMPARE_'
 LOOP = 'LOOP_'
 URL = 'URL_'
 
+db_logger = logging.getLogger('db')
+
 
 class Function:
     name = 'Function name'
     state = False
 
-    def __init__(self, f_str=''):
+    def __init__(self, _id, f_str=''):
         self.full_str = f_str
+        self.id = _id
         self.parts = f_str.split()
 
     def __set_name(self, v: str):
@@ -55,6 +60,7 @@ class Open(Function):
         return text
 
     def execute(self, variables, **kwargs):
+        db_logger.info(f'Function {self.name} - OK|{self.id}')
         if self.parts[1] in variables.keys():
             kwargs.get('opened_urls').append(variables[self.parts[1]])
             kwargs.get('driver').get(variables[self.parts[1]])
@@ -85,12 +91,12 @@ class Back(Function):
         return text
 
     def execute(self, variables, **kwargs):
-
+        db_logger.info(f'Function {self.name} - OK|{self.id}')
         if int(self.parts[1]) <= len(kwargs.get('opened_urls')):
             length = len(kwargs.get('opened_urls')) - 1
             url = kwargs.get('opened_urls')[length - int(self.parts[1])]
             kwargs.get('opened_urls').pop(length - int(self.parts[1]))
-            Open(f'open {url}').execute(variables, **kwargs)
+            Open(self.id, f'open {url}').execute(variables, **kwargs)
 
 
 class Sleep(Function):
@@ -123,6 +129,7 @@ class Sleep(Function):
         return text
 
     def execute(self, variables, **kwargs):
+        db_logger.info(f'Function {self.name} - OK|{self.id}')
         print(f'Sleep on {self.parts[1]} sec')
         time.sleep(int(self.parts[1]))
 
@@ -149,6 +156,7 @@ class Let(Function):
         return text
 
     def execute(self, variables, **kwargs):
+        db_logger.info(f'Function {self.name} - OK|{self.id}')
         if not self.parts[1] in variables.keys():
             try:
                 if self.parts[2]:
@@ -197,7 +205,7 @@ class Get(Function):
     def execute(self, variables, **kwargs):
         expression = self.parts[2].split('|')[1]
         result = self.xpath(kwargs.get('tree'), expression)
-
+        db_logger.info(f'Function {self.name} - OK|{self.id}')
         if not self.parts[1] in variables.keys():
             try:
                 variables.update({VAR + self.parts[1]: result})
@@ -230,6 +238,7 @@ class Concat(Function):
 
     def execute(self, variables, **kwargs):
         tmp = ''
+        db_logger.info(f'Function {self.name} - OK|{self.id}')
         for part in self.parts[2:]:
             if part in variables.keys():
                 tmp += variables[part]
@@ -262,6 +271,7 @@ class Split(Function):
         return text
 
     def execute(self, variables, **kwargs):
+        db_logger.info(f'Function {self.name} - OK|{self.id}')
         if self.parts[1] in variables.keys():
             n_var = self.parts[1].replace(VAR, '')
             spl = variables[self.parts[1]].split(self.parts[2])
@@ -294,6 +304,7 @@ class Replace(Function):
         return text
 
     def execute(self, variables, **kwargs):
+        db_logger.info(f'Function {self.name} - OK|{self.id}')
         variables[self.parts[1]] = variables[self.parts[1]].replace(self.parts[2], self.parts[3])
 
 
@@ -323,21 +334,24 @@ class Add(Function):
         return text
 
     def execute(self, variables, **kwargs):
+        db_logger.info(f'Function {self.name} - OK|{self.id}')
         variables[self.parts[1]] = int(variables[self.parts[1]]) + int(self.parts[2])
 
 
 class CheckSyntax:
 
-    def __init__(self, code: str):
+    def __init__(self, _id, code: str):
         self.code = code
+        self.id = _id
 
     def check(self):
         check_result = []
         lines = self.code.splitlines()
+        # print('CH SYN', lines)
         for line in lines:
             parts = line.split()
             try:
-                f = eval(parts[0].capitalize())(line)
+                f = eval(parts[0].capitalize())(self.id, line)
                 result = f.check_syntax()
                 check_result.append(result)
             except NameError:

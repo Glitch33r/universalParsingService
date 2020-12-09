@@ -1,7 +1,79 @@
 {% extends 'default/dashboard.html' %}
 
-{% block title %}Collected Unit Data |{% endblock %}
+{% block title %}Collected Data|{% endblock %}
 
 {% block content-head %}
-    {% include 'parts/content-head.html' with next='Collected Unit Data' %}
+    {% include 'parts/content-head.html' with next='Collected Data' %}
+{% endblock %}
+
+{% block content %}
+    {% if messages %}
+        <div class="alert alert-custom alert-success fade show mb-5" role="alert">
+            <div class="alert-icon">
+                <i class="flaticon-like"></i>
+            </div>
+            {% for msg in messages %}
+                <div class="alert-text">{{ msg }}</div>
+                <p {% if msg.tags %} class="{{ msg.tags }}"{% endif %}></p>
+            {% endfor %}
+            <div class="alert-close">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">
+                            <i class="flaticon2-cross"></i>
+                        </span>
+                </button>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="card card-custom gutter-b">
+        <!--begin::Header-->
+        <div class="card-header border-0 py-5">
+            <h3 class="card-title align-items-start flex-column">
+                <span class="card-label font-weight-bolder text-dark">Data</span><br><br>
+                <span class="text-muted mt-3 font-weight-bold font-size-sm">List collected data by units</span>
+            </h3>
+            <br>
+        </div>
+        <!--end::Header-->
+        <!--begin::Body-->
+        <div class="card-body py-0">
+            <!--begin::Table-->
+            <div class="table-responsive">
+                <table class="table table-head-custom table-vertical-center" id="kt_advance_table_widget_1">
+                    <thead>
+                    <tr class="text-left">
+                        <th class="pr-0" style="width: 200px">Unit Nickname</th>
+                        <th style="min-width: 150px">Date creation</th>
+                        <th style="min-width: 150px">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in data %}
+                        <tr>
+                            <td>
+                                <span class="text-dark-75 font-weight-bolder d-block font-size-lg">{{ item.nickname }}</span>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column w-100 mr-2">
+                                    <span class="text-dark-75 font-weight-bolder d-block font-size-lg">{{ item.createdAt }}</span>
+                                </div>
+                            </td>
+                            <td >
+                                <a href="{% url 'main:data-show' pk=item.id  %}" class="btn btn-icon btn-light btn-sm mx-3">
+                                    <i aria-hidden="true" class="flaticon-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <td class="text-center font-weight-bolder" colspan="5">Sorry, you have not units that collected data</td>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+            <!--end::Table-->
+        </div>
+        <!--end::Body-->
+    </div>
 {% endblock %}

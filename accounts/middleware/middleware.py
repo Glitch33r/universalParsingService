@@ -1,7 +1,8 @@
-from django.http import HttpResponsePermanentRedirect
-from django.conf import settings
-from django.utils.deprecation import MiddlewareMixin
 from re import compile
+
+from django.conf import settings
+from django.http import HttpResponsePermanentRedirect
+from django.utils.deprecation import MiddlewareMixin
 
 EXEMPT_URLS = [compile(settings.LOGIN_URL.lstrip('/'))]
 if hasattr(settings, 'LOGIN_EXEMPT_URLS'):

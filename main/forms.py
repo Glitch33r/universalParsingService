@@ -1,5 +1,5 @@
 from django.forms import ModelForm, forms
-from django_celery_beat.models import CrontabSchedule
+from django_celery_beat.models import CrontabSchedule, PeriodicTask
 
 from main.models import *
 
@@ -47,3 +47,16 @@ class CrontabForm(ModelForm):
     class Meta:
         model = CrontabSchedule
         fields = '__all__'
+
+
+class PeriodicTaskUpdateForm(ModelForm):
+    disabled_fields = ('task', )
+
+    class Meta:
+        model = PeriodicTask
+        fields = ('name', 'task', 'description', 'enabled')
+
+    def __init__(self, *args, **kwargs):
+        super(PeriodicTaskUpdateForm, self).__init__(*args, **kwargs)
+        for field in self.disabled_fields:
+            self.fields[field].disabled = True
