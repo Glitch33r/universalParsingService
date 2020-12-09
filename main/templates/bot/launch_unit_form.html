@@ -1,0 +1,57 @@
+{% extends 'default/dashboard.html' %}
+
+{% block title %}Launch Unit | Add task |{% endblock %}
+
+{% block content-head %}
+    {% include 'parts/content-head.html' with next='Add task' %}
+{% endblock %}
+
+{% load widget_tweaks %}
+
+{% block content %}
+    <div id="error"></div>
+    <strong>Unit</strong>
+    <p>Choose one of the units</p>
+    <hr>
+    <div class="form-group">
+        <select class="form-control" id="unit-select">
+            <option selected>------</option>
+            {% for i in data %}
+                <option value="{{ i.id }}">{{ i.nickname }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div id="form"></div>
+{% endblock %}
+
+{% block custom-script %}
+{#    {{ block.super }}#}
+
+    <script>
+        $('#unit-select').on('change', function () {
+
+            $.ajax({
+                url: '{% url 'main:add-task' %}', // the endpoint
+                type: "POST", // http method
+                data: {
+                    id: this.value,
+                }, // data sent with the post request
+
+                // handle a successful response
+                success: function (data) {
+                    $('div#form').html(data)
+                },
+
+                // handle a non-successful response
+                error: function (xhr, errmsg, err) {
+                    $('div#error').html("<div class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">" +
+                        "<strong id=\"error\">" + JSON.parse(xhr.responseText)['error'] + "</strong>" +
+                        "            <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">" +
+                        "                <span aria-hidden=\"true\">&times;</span>" +
+                        "            </button>" +
+                        "        </div>"); // add the error to the dom
+                }
+            })
+        });
+    </script>
+{% endblock %}

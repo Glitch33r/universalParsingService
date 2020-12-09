@@ -3,7 +3,7 @@
 {% block title %}List Unit|{% endblock %}
 
 {% block content-head %}
-    {% include 'parts/content-head.html' with next='List Unit' %}
+    {% include 'parts/content-head.html' with next='Units list' %}
 {% endblock %}
 
 {% block content %}
@@ -30,9 +30,10 @@
         <!--begin::Header-->
         <div class="card-header border-0 py-5">
             <h3 class="card-title align-items-start flex-column">
-                <span class="card-label font-weight-bolder text-dark">Units</span><br>
+                <span class="card-label font-weight-bolder text-dark">Units</span><br><br>
                 <span class="text-muted mt-3 font-weight-bold font-size-sm">List of your units</span>
             </h3>
+            <br>
             <div class="card-toolbar">
                 <a href="{% url 'main:create-unit' %}" class="btn btn-success font-weight-bolder font-size-sm">
                     <i aria-hidden="true" class="fas fa-plus"></i>Add New Unit</a>

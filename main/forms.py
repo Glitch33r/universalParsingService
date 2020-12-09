@@ -1,4 +1,5 @@
 from django.forms import ModelForm, forms
+from django_celery_beat.models import CrontabSchedule
 
 from main.models import *
 
@@ -40,3 +41,9 @@ class UnitCodeForm(ModelForm):
     class Meta:
         model = UnitCode
         fields = ['code', ]
+
+
+class CrontabForm(ModelForm):
+    class Meta:
+        model = CrontabSchedule
+        fields = '__all__'

@@ -1,14 +1,15 @@
 import json
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.contrib import messages
 from .forms import *
 from .spider.utils import Function
 from .tasks import *
 from django.shortcuts import redirect, render, get_object_or_404
-
-from django_celery_beat.models import PeriodicTask, IntervalSchedule
+from django.views.decorators.csrf import csrf_exempt
+from django_celery_beat.models import PeriodicTask, IntervalSchedule, CrontabSchedule
 
 
 def all_subclasses(cls):
@@ -18,28 +19,6 @@ def all_subclasses(cls):
 
 def index(request):
     return render(request, 'index.html')
-
-
-def run_bot(request):
-    print(request.GET.dict())
-    print(request.GET.get('x'), request.GET.get('y'))
-    request.user.profile.tasks.add(create_periodic_task(request.GET.get('x'), request.GET.get('y')))
-    # run_bot_task.delay(request.GET.get('x'), request.GET.get('y'))
-
-
-def create_periodic_task(a, b):
-    schedule, _ = IntervalSchedule.objects.get_or_create(
-        every=30,
-        period=IntervalSchedule.SECONDS
-    )
-
-    p_task = PeriodicTask.objects.create(
-        interval=schedule,  # we created this above.
-        name=f'run_bot_task_{a}_{b}',  # simply describes this periodic task.
-        task='main.tasks.run_bot_task',  # name of task.
-        args=json.dumps([a, b]),
-    )
-    return p_task
 
 
 def dashboard(request):
@@ -100,7 +79,10 @@ def create_unit_form(request):
 
 
 def list_unit(request):
-    values = Unit.objects.filter(user=request.user)
+    if request.user.is_superuser:
+        values = Unit.objects.all()
+    else:
+        values = Unit.objects.filter(user=request.user)
     return render(request, 'bot/list_unit.html', {'data': values})
 
 
@@ -130,13 +112,54 @@ def unit_delete(request, obj_id: int):
 
     return redirect(reverse('main:list-unit'))
 
-# def list_unit_code(request):
-#     return render(request, 'bot/list_code.html')
-
 
 def launch_unit(request):
-    return render(request, 'bot/launch_unit.html')
+    user = request.user
+    tasks = user.profile.tasks.all()
+    return render(request, 'bot/launch_unit.html', {'data': tasks})
+
+
+@csrf_exempt
+def launch_unit_form(request):
+    units = Unit.objects.filter(user=request.user)
+
+    if request.is_ajax():
+        unit_id = request.POST.get('id')
+        unit = Unit.objects.filter(pk=unit_id)[0]
+        crontab = CrontabForm()
+        html = render_to_string('bot/launch_part.html', {'value': unit, 'form': crontab})
+        return HttpResponse(html)
+    elif request.method == 'POST':
+        POST = request.POST.copy()
+        task_name = POST.pop('task_name')[0]
+        task_desc = POST.pop('task_desc')[0]
+        unit_id = POST.pop('unit_id')[0]
+        crontab = CrontabForm(POST)
+        if crontab.is_valid():
+            obj_crontab = crontab.save()
+            create_periodic_task(request, task_name, task_desc, obj_crontab, unit_id)
+            messages.success(
+                request,
+                'Unit task was added successfully!'
+            )
+            return redirect(reverse('main:launch-unit'))
+
+    return render(request, 'bot/launch_unit_form.html', {'data': units})
 
 
 def collected_data(request):
     return render(request, 'bot/collected_data.html')
+
+
+def create_periodic_task(request, name, description, schedule, unit_id):
+
+    task = PeriodicTask.objects.create(
+        crontab=schedule,  # we created this above.
+        name=name,  # simply describes this periodic task.
+        task='main.tasks.unit_task',  # name of task.
+        description=description,
+        args=json.dumps(unit_id),
+    )
+    request.user.profile.tasks.add(task)
+
+    return task

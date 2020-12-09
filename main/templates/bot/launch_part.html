@@ -1,0 +1,68 @@
+<br>
+<strong>Unit info</strong>
+<hr>
+<p><strong>User:</strong> {{ value.user.username }}</p>
+<p><strong>Nickname:</strong> <a style="text-decoration: underline !important;" target="_blank"
+                                 href="{% url 'main:unit-update' pk=value.id %}">{{ value.nickname }}</a></p>
+<p><strong>Date created:</strong> {{ value.createdAt }}</p>
+<br>
+<strong>Task</strong>
+<hr>
+<form class="form" method="post">
+    <div class="card-body">
+        <div class="form-group">
+            <input type="hidden" name="unit_id" value="{{ value.id }}" required class="form-control form-control-solid"/>
+        </div>
+        <div class="form-group">
+            <label>Name of task:</label>
+            <input type="text" name="task_name" required class="form-control form-control-solid"/>
+        </div>
+        <div class="form-group">
+            <label>Task description:</label>
+            <input type="text" name="task_desc" class="form-control form-control-solid"
+                   value="{{ value.description }}"/>
+        </div>
+        <strong>Add cron schedule</strong>
+        <p>Cron info <a href="https://crontab.guru/">here</a></p>
+        <hr>
+        <div class="form-group">
+            {{ form.minute.errors }}
+            <label for="{{ form.minute.id_for_label }}">Minute:</label>
+            {{ form.minute }}
+            <span class="form-text text-muted">{{ form.minute.help_text }}</span>
+        </div>
+        <div class="form-group">
+            {{ form.hour.errors }}
+            <label for="{{ form.hour.id_for_label }}">Hour:</label>
+            {{ form.hour }}
+            <span class="form-text text-muted">{{ form.hour.help_text }}</span>
+        </div>
+        <div class="form-group">
+            {{ form.day_of_week.errors }}
+            <label for="{{ form.day_of_week.id_for_label }}">Day of week:</label>
+            {{ form.day_of_week }}
+            <span class="form-text text-muted">{{ form.day_of_week.help_text }}</span>
+        </div>
+        <div class="form-group">
+            {{ form.day_of_month.errors }}
+            <label for="{{ form.day_of_month.id_for_label }}">Day of month:</label>
+            {{ form.day_of_month }}
+            <span class="form-text text-muted">{{ form.day_of_month.help_text }}</span>
+        </div>
+        <div class="form-group">
+            {{ form.month_of_year.errors }}
+            <label for="{{ form.month_of_year.id_for_label }}">Month of year:</label>
+            {{ form.month_of_year }}
+            <span class="form-text text-muted">{{ form.month_of_year.help_text }}</span>
+        </div>
+        <div class="form-group">
+            {{ form.timezone.errors }}
+            <label for="{{ form.timezone.id_for_label }}">Timezone:</label>
+            {{ form.timezone }}
+            <span class="form-text text-muted">{{ form.timezone.help_text }}</span>
+        </div>
+    </div>
+    <div class="card-footer">
+        <button type="submit" class="btn btn-primary mr-2">Add task</button>
+    </div>
+</form>

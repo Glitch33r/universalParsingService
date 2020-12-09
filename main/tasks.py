@@ -11,7 +11,7 @@ from .models import *
 
 
 @shared_task
-def run_bot_task(x, y):
+def unit_task(x, y):
     z = int(x) + int(y)
     print(f'answer: {z}')
     data(text=str(z)).save()
