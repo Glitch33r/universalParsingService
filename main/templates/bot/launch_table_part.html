@@ -67,6 +67,11 @@
                             <!--end::Svg Icon-->
                         </span>
                 </a>
+                <a href="#" title="Log view" onclick="log(this); return false;" data-id='{{ item.args|slice:"1:-1" }}'
+                   class="btn btn-icon btn-light-primary mr-2"
+                   id="modal-log">
+                    <i class="flaticon2-sheet"></i>
+                </a>
             </td>
         </tr>
     {% empty %}

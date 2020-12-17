@@ -15,7 +15,6 @@ class DatabaseLogHandler(logging.Handler):
 
         msg = self.format(record)
         temp = msg.split('|')
-        print('TEMP', temp)
         from main.models import Unit
         unit = Unit.objects.filter(pk=msg.split('|')[1])[0]
 

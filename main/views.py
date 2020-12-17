@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django_celery_beat.models import PeriodicTask
 
+from logger.models import StatusLog
 from .forms import *
 from .spider.utils import Function
 from .tasks import *
@@ -118,6 +119,15 @@ def launch_unit(request):
     user = request.user
     tasks = user.profile.tasks.all()
     return render(request, 'bot/launch_unit.html', {'data': tasks})
+
+
+@csrf_exempt
+def get_log(request):
+    if request.is_ajax():
+        unit_id = request.POST.get('id')
+        log_list = StatusLog.objects.filter(unit_id=unit_id)
+        html = render_to_string('default/modal-log.html', {'data': log_list})
+        return HttpResponse(html)
 
 
 def launch_unit_update(request, pk):

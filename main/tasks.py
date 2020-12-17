@@ -19,6 +19,6 @@ def unit_task(_id):
     program = Program(_id, unit_code)
     program.run()
     db_logger.info(f'Data saved|{_id}')
-    UnitData.objects.create(data=json.dumps(program.variables), unit_id=_id)
+    UnitData.objects.create(data=json.dumps(program.variables, ensure_ascii=False), unit_id=_id)
     exec_time = datetime.datetime.now() - start
-    db_logger.info(f'Execution program time: {exec_time}|{_id}')
+    db_logger.info(f'Execution program time: {exec_time.seconds}s|{_id}')

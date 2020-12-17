@@ -95,7 +95,7 @@
                                 </div>
                             </td>
                             <td>
-                                <a href="{% url 'main:task-update' pk=item.id %}"
+                                <a href="{% url 'main:task-update' pk=item.id %}" title="Edit"
                                    class="btn btn-icon btn-light btn-sm mx-3">
                                     <span class="svg-icon svg-icon-md svg-icon-primary">
                                         <!--begin::Svg Icon | path:/metronic/theme/html/demo1/dist/assets/media/svg/icons/Communication/Write.svg-->
@@ -118,6 +118,11 @@
                                         <!--end::Svg Icon-->
                                     </span>
                                 </a>
+                                <a href="#" title="Log view" onclick="log(this); return false;" data-id='{{ item.args|slice:"1:-1" }}'
+                                   class="btn btn-icon btn-light-primary mr-2"
+                                   id="modal-log">
+                                    <i class="flaticon2-sheet"></i>
+                                </a>
                             </td>
                         </tr>
                     {% empty %}
@@ -131,12 +136,41 @@
         </div>
         <!--end::Body-->
     </div>
+
+    <!-- Modal-->
+    <div class="modal fade" id="logModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"></div>
 {% endblock %}
 
 {% block custom-script %}
-{#    {{ block.super }}#}
-
     <script>
+        function log(t) {
+
+            let unit_id = $(t).data("id");
+            console.log(unit_id);
+            $.ajax({
+                url: '{% url 'main:unit-log' %}', // the endpoint
+                type: "POST", // http method
+                data: {
+                    id: unit_id
+                },
+
+                // handle a successful response
+                success: function (data) {
+                    $('div#logModal').html(data)
+                    $('#logModal').modal('show')
+                },
+
+                // handle a non-successful response
+                error: function (xhr, errmsg, err) {
+                    $('div#error').html("<div class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">" +
+                        "<strong id=\"error\">" + JSON.parse(xhr.responseText)['error'] + "</strong>" +
+                        "            <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">" +
+                        "                <span aria-hidden=\"true\">&times;</span>" +
+                        "            </button>" +
+                        "        </div>"); // add the error to the dom
+                }
+            })
+        };
         $('#refresh').on('click', function (event) {
             event.preventDefault()
 

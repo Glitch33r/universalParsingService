@@ -19,7 +19,7 @@ class Function:
     name = 'Function name'
     state = False
 
-    def __init__(self, _id, f_str=''):
+    def __init__(self, _id=None, f_str=''):
         self.full_str = f_str
         self.id = _id
         self.parts = f_str.split()

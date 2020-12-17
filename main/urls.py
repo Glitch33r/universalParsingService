@@ -13,6 +13,7 @@ urlpatterns = [
     path('delete/<int:obj_id>', unit_delete, name='unit-delete'),
     path('update/<int:pk>', unit_update, name='unit-update'),
     path('launch-unit', launch_unit, name='launch-unit'),
+    path('get-unit-log', get_log, name='unit-log'),
     path('launch-unit-refresh', launch_refresh, name='launch-refresh'),
     path('add-task', launch_unit_form, name='add-task'),
     path('task-update/<int:pk>', launch_unit_update, name='task-update'),
