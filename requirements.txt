@@ -48,7 +48,7 @@ six==1.15.0
 sniffio==1.2.0
 sortedcontainers==2.3.0
 soupsieve==2.0.1
-sqlparse==0.4.1
+sqlparse==0.4.2
 tornado==6.1
 trio==0.17.0
 trio-websocket==0.9.1
